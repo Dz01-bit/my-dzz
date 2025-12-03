@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dzz">
+    <title>Dzz</title>
+
+    <style>
+        /* --- 样式保持不变 --- */
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background-color: #F2F2F7; margin: 0; padding: 0; padding-top: env(safe-area-inset-top); padding-bottom: 80px; color: #1c1c1e; }
+        .header { padding: 20px; padding-top: 50px; background: white; border-bottom: 0.5px solid #c6c6c8; margin-bottom: 15px; }
+        h1 { margin: 0; font-size: 32px; font-weight: 800; }
+        .date-str { color: #8E8E93; font-size: 14px; margin-top: 5px; }
+        .section-block { background: white; margin: 15px; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .section-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; padding: 5px; border-bottom: 2px solid transparent; color: #007AFF; }
+        .section-title:focus { border-bottom: 2px solid #007AFF; outline: none; background: #f0f8ff; }
+        .task-item { border-bottom: 1px solid #eee; padding: 12px 0; }
+        .task-header { display: flex; align-items: flex-start; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid #007AFF; border-radius: 50%; margin-right: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .checkbox.checked { background: #007AFF; }
+        .checkbox.checked::after { content: '✓'; color: white; font-size: 14px; }
+        .task-main { flex: 1; }
+        .task-name { font-size: 17px; font-weight: 500; word-break: break-all;}
+        .time-tag { font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-left: 5px; font-weight: bold; white-space: nowrap; }
+        .tag-red { background: #ffebeb; color: #ff3b30; }
+        .tag-green { background: #eaffea; color: #34c759; }
+        .tag-gray { background: #eee; color: #8e8e93; }
+        .task-details { margin-top: 8px; margin-left: 32px; font-size: 14px; color: #666; display: none; }
+        .show-details { display: block; }
+        .detail-row { margin-bottom: 6px; }
+        .toggle-btn { font-size: 12px; color: #007AFF; margin-left: 10px; cursor: pointer; }
+        .progress-bar-bg { background: #eee; height: 6px; border-radius: 3px; width: 100%; margin: 5px 0; }
+        .progress-bar-fill { background: #34c759; height: 100%; border-radius: 3px; transition: width 0.3s;}
+        .task-img { max-width: 100%; border-radius: 8px; margin-top: 5px; max-height: 300px; object-fit: cover;}
+        .completed-section { margin-top: 15px; }
+        .completed-header { color: #8E8E93; font-size: 14px; padding: 8px 0; cursor: pointer; display: flex; align-items: center; }
+        .completed-header::before { content: '▶'; font-size: 10px; margin-right: 5px; transition: transform 0.2s;}
+        .completed-header.expanded::before { transform: rotate(90deg); }
+        .completed-list { display: none; opacity: 0.6; }
+        .completed-list.show { display: block; }
+        .completed-list .task-name { text-decoration: line-through; }
+        .add-btn-block { margin-top: 10px; background: #f2f2f7; color: #007AFF; text-align: center; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; display: none; align-items: flex-end; }
+        .modal { background: white; width: 100%; border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 20px; box-sizing: border-box; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal h3 { margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;}
+        .form-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px;}
+        textarea.form-input { height: 80px; font-family: inherit; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
+        .btn-cancel { background: #eee; color: #333; }
+        .btn-save { background: #007AFF; color: white; }
+        .subtask-input-tip { font-size: 12px; color: #888; margin-top: 4px; }
+        #loading { text-align: center; padding: 20px; color: #888; }
+
+        /* 新增：数据管理按钮样式 */
+        .sync-btn {
+            background: #e5e5ea;
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-right: 10px;
+            display: inline-block;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+        .sync-area {
+            text-align: center;
+            margin: 20px 0;
+            padding-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Dzz</h1>
+        <div class="date-str" id="dateDisplay">加载中...</div>
+    </div>
+
+    <div id="loading">正在加载数据...</div>
+    <div id="mainContainer" style="display:none;"></div>
+
+    <div class="sync-area" id="syncArea" style="display:none;">
+        <p style="color:#888; font-size:12px; margin-bottom:10px;">☁️ 数据同步与备份</p>
+        <button class="sync-btn" onclick="exportData()">📤 导出数据</button>
+        <button class="sync-btn" onclick="document.getElementById('importFile').click()">📥 导入数据</button>
+        <input type="file" id="importFile" style="display:none" onchange="importData(this)">
+    </div>
+
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal">
+            <h3 id="modalTitle">添加新待办</h3>
+            <div class="form-group">
+                <label class="form-label">待办名称 (必填)</label>
+                <input type="text" id="inputName" class="form-input" placeholder="例如：完成汇报PPT">
+            </div>
+            <div class="form-group">
+                <label class="form-label">备注 (可选)</label>
+                <textarea id="inputNote" class="form-input" placeholder="详细描述..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">子任务 (可选，每行一个)</label>
+                <textarea id="inputSubtasks" class="form-input" placeholder="步骤1&#10;步骤2&#10;步骤3" style="height:60px"></textarea>
+                <div class="subtask-input-tip">提示：换行来区分不同的子步骤</div>
+            </div>
+            <div class="form-group" style="display:flex; gap:10px;">
+                <div style="flex:1">
+                    <label class="form-label">截止时间 (可选)</label>
+                    <input type="date" id="inputDate" class="form-input">
+                </div>
+                <div style="flex:1">
+                    <label class="form-label">进度 % (可选)</label>
+                    <input type="number" id="inputProgress" class="form-input" placeholder="0-100" min="0" max="100">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">添加图片</label>
+                <input type="file" id="inputImg" accept="image/*" onchange="handleImage(this)">
+                <input type="hidden" id="imgBase64">
+                <div id="imgPreview" style="margin-top:5px; max-width:150px;"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-save" onclick="saveTask()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. IndexedDB 引擎 (保持不变) ---
+        const DB_NAME = "Dzz_Database";
+        const STORE_NAME = "tasks_store";
+        let db;
+
+        const dbEngine = {
+            init: function() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(DB_NAME, 1);
+                    request.onerror = (e) => reject("数据库打开失败");
+                    request.onsuccess = (e) => {
+                        db = e.target.result;
+                        resolve(db);
+                    };
+                    request.onupgradeneeded = (e) => {
+                        db = e.target.result;
+                        if (!db.objectStoreNames.contains(STORE_NAME)) {
+                            db.createObjectStore(STORE_NAME, { keyPath: "id" });
+                        }
+                    };
+                });
+            },
+            save: function(data) {
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([STORE_NAME], "readwrite");
+                    const store = transaction.objectStore(STORE_NAME);
+                    const request = store.put({ id: "main_data", content: data });
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject("保存失败");
+                });
+            },
+            load: function() {
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([STORE_NAME], "readonly");
+                    const store = transaction.objectStore(STORE_NAME);
+                    const request = store.get("main_data");
+                    request.onsuccess = (e) => {
+                        resolve(e.target.result ? e.target.result.content : null);
+                    };
+                    request.onerror = () => reject("读取失败");
+                });
+            }
+        };
+
+        let appData = {
+            sections: [
+                { title: "重要紧急", tasks: [] },
+                { title: "重要不紧急", tasks: [] },
+                { title: "日常琐事", tasks: [] },
+                { title: "等待回复", tasks: [] },
+                { title: "备忘录", tasks: [] }
+            ]
+        };
+        let currentSectionIndex = 0;
+
+        // --- 初始化 ---
+        window.onload = async function() {
+            const date = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('dateDisplay').innerText = date.toLocaleDateString('zh-CN', options);
+
+            try {
+                await dbEngine.init();
+                const savedData = await dbEngine.load();
+                if (savedData) appData = savedData;
+                
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("mainContainer").style.display = "block";
+                document.getElementById("syncArea").style.display = "block"; // 显示同步按钮
+                renderAll();
+            } catch (err) { alert("数据库初始化失败：" + err); }
+        };
+
+        // --- 渲染与交互 (保持不变) ---
+        function renderAll() {
+            const container = document.getElementById("mainContainer");
+            container.innerHTML = "";
+            appData.sections.forEach((section, index) => {
+                const block = document.createElement("div");
+                block.className = "section-block";
+                const title = document.createElement("div");
+                title.className = "section-title";
+                title.contentEditable = true;
+                title.innerText = section.title;
+                title.onblur = function() {
+                    appData.sections[index].title = title.innerText;
+                    saveDataAsync();
+                };
+                block.appendChild(title);
+                const activeList = document.createElement("div");
+                const completedSection = document.createElement("div");
+                completedSection.className = "completed-section";
+                const completedHeader = document.createElement("div");
+                completedHeader.className = "completed-header";
+                completedHeader.innerHTML = "已完成待办";
+                completedHeader.onclick = function() {
+                    this.classList.toggle("expanded");
+                    this.nextElementSibling.classList.toggle("show");
+                };
+                const completedList = document.createElement("div");
+                completedList.className = "completed-list";
+                let hasCompleted = false;
+                section.tasks.forEach((task, taskIdx) => {
+                    const taskEl = createTaskElement(task, index, taskIdx);
+                    if (task.done) {
+                        completedList.appendChild(taskEl);
+                        hasCompleted = true;
+                    } else {
+                        activeList.appendChild(taskEl);
+                    }
+                });
+                block.appendChild(activeList);
+                if (hasCompleted) {
+                    completedSection.appendChild(completedHeader);
+                    completedSection.appendChild(completedList);
+                    block.appendChild(completedSection);
+                }
+                const addBtn = document.createElement("div");
+                addBtn.className = "add-btn-block";
+                addBtn.innerText = "+ 添加待办";
+                addBtn.onclick = function() { openModal(index); };
+                block.appendChild(addBtn);
+                container.appendChild(block);
+            });
+        }
+
+        function createTaskElement(task, sectionIdx, taskIdx) {
+            const div = document.createElement("div");
+            div.className = "task-item";
+            let timeHtml = "";
+            let timeClass = "tag-gray";
+            if (task.dueDate && !task.done) {
+                const now = new Date();
+                const due = new Date(task.dueDate);
+                now.setHours(0,0,0,0); due.setHours(0,0,0,0);
+                const diffTime = due - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                if (diffDays < 0) { timeHtml = `过期 ${Math.abs(diffDays)} 天`; timeClass = "tag-red"; }
+                else if (diffDays === 0) { timeHtml = "今天截止"; timeClass = "tag-red"; }
+                else { timeHtml = `剩 ${diffDays} 天`; timeClass = "tag-green"; }
+            }
+            div.innerHTML = `
+                <div class="task-header">
+                    <div class="checkbox ${task.done ? 'checked' : ''}" onclick="toggleDone(${sectionIdx}, ${taskIdx})"></div>
+                    <div class="task-main">
+                        <div class="task-name">
+                            ${task.name}
+                            ${timeHtml ? `<span class="time-tag ${timeClass}">${timeHtml}</span>` : ''}
+                            ${(task.note || task.subtasks || task.img) ? `<span class="toggle-btn" onclick="toggleDetails(this)">展开详情</span>` : ''}
+                        </div>
+                    </div>
+                    <div style="color:#ccc; font-size:18px; margin-left:10px; cursor:pointer;" onclick="deleteTask(${sectionIdx}, ${taskIdx})">×</div>
+                </div>
+                <div class="task-details">
+                    ${task.progress ? `<div class="detail-row"><div style="font-size:12px;">进度 ${task.progress}%</div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${task.progress}%"></div></div></div>` : ''}
+                    ${task.note ? `<div class="detail-row">📝 ${task.note}</div>` : ''}
+                    ${task.subtasks ? `<div class="detail-row">${task.subtasks.split('\n').map(sub => `<div>▫️ ${sub}</div>`).join('')}</div>` : ''}
+                    ${task.img ? `<img src="${task.img}" class="task-img">` : ''}
+                    ${task.dueDate ? `<div class="detail-row" style="color:#888; font-size:12px">截止日: ${task.dueDate}</div>` : ''}
+                </div>
+            `;
+            return div;
+        }
+
+        function toggleDetails(btn) {
+            const details = btn.parentElement.parentElement.parentElement.nextElementSibling;
+            if (details.classList.contains('show-details')) { details.classList.remove('show-details'); btn.innerText = "展开详情"; }
+            else { details.classList.add('show-details'); btn.innerText = "收起"; }
+        }
+        function toggleDone(sIdx, tIdx) { appData.sections[sIdx].tasks[tIdx].done = !appData.sections[sIdx].tasks[tIdx].done; saveDataAsync().then(renderAll); }
+        function deleteTask(sIdx, tIdx) { if(confirm("确定删除吗？")) { appData.sections[sIdx].tasks.splice(tIdx, 1); saveDataAsync().then(renderAll); } }
+
+        function openModal(sectionIdx) {
+            currentSectionIndex = sectionIdx;
+            document.getElementById("inputName").value = "";
+            document.getElementById("inputNote").value = "";
+            document.getElementById("inputSubtasks").value = "";
+            document.getElementById("inputDate").value = "";
+            document.getElementById("inputProgress").value = "";
+            document.getElementById("inputImg").value = "";
+            document.getElementById("imgBase64").value = "";
+            document.getElementById("imgPreview").innerHTML = "";
+            document.getElementById("taskModal").style.display = "flex";
+            document.getElementById("inputName").focus();
+        }
+        function closeModal() { document.getElementById("taskModal").style.display = "none"; }
+        function handleImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (file.size > 10 * 1024 * 1024) { alert("图片太大了，请上传 10MB 以内的图片"); input.value = ""; return; }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById("imgBase64").value = e.target.result;
+                    document.getElementById("imgPreview").innerHTML = `<img src="${e.target.result}" style="width:50px; height:50px; object-fit:cover; border-radius:4px;">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        async function saveTask() {
+            const name = document.getElementById("inputName").value.trim();
+            if (!name) return alert("待办名称必须要写哦！");
+            const newTask = {
+                name: name,
+                note: document.getElementById("inputNote").value,
+                subtasks: document.getElementById("inputSubtasks").value,
+                dueDate: document.getElementById("inputDate").value,
+                progress: document.getElementById("inputProgress").value,
+                img: document.getElementById("imgBase64").value,
+                done: false,
+                createAt: new Date().getTime()
+            };
+            appData.sections[currentSectionIndex].tasks.push(newTask);
+            try { await saveDataAsync(); renderAll(); closeModal(); } catch (e) { alert("保存失败：" + e); appData.sections[currentSectionIndex].tasks.pop(); }
+        }
+        async function saveDataAsync() { try { await dbEngine.save(appData); } catch (e) { console.error("Save failed", e); alert("保存失败，可能是空间不足"); } }
+
+        // --- 🆕 新增：数据同步逻辑 ---
+
+        // 1. 导出 (下载文件)
+        async function exportData() {
+            const dataStr = JSON.stringify(appData);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement("a");
+            a.href = url;
+            const date = new Date().toISOString().slice(0,10);
+            a.download = `Dzz备份_${date}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert("备份文件已生成！\n请把这个文件传到另一台设备，然后点击“导入数据”即可。");
+        }
+
+        // 2. 导入 (读取文件)
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (!confirm("⚠️ 警告：导入数据会【覆盖】当前设备上的所有任务！\n确定要继续吗？")) {
+                input.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    // 简单的格式检查
+                    if (!importedData.sections) throw new Error("格式不对");
+                    
+                    appData = importedData;
+                    await saveDataAsync();
+                    renderAll();
+                    alert("✅ 数据导入成功！");
+                } catch (err) {
+                    alert("❌ 导入失败：文件格式看起来不对，或者文件损坏了。");
+                }
+            };
+            reader.readAsText(file);
+            input.value = ""; // 重置，以便可以再次导入同一个文件
+        }
+
+    </script>
+</body>
+</html>
