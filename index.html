@@ -16,11 +16,13 @@
             --card-bg: #FFFFFF;
             --theme-dark: #556b2f;
             --theme-light: #eaf1ea;
+            --input-bg: #F2F4F2;
             --text-main: #333333;
-            --text-sub: #999999; /* 浅灰 */
-            --danger: #b71c1c; 
+            --text-sub: #999999;
+            --danger: #d32f2f;         
             --highlight: #2e7d32; 
-            --border-color: #d0d0d0;
+            --expired-text: #b0b0b0;   /* 过期日期文字颜色(灰) */
+            --border-color: #e0e0e0;
             --badge-bg: #f0f2f0;
         }
 
@@ -29,7 +31,7 @@
             background-color: var(--bg-color); 
             margin: 0; padding: 0; 
             padding-top: env(safe-area-inset-top); 
-            padding-bottom: 100px; 
+            padding-bottom: 120px; 
             color: var(--text-main);
             user-select: none; -webkit-user-select: none;
         }
@@ -47,149 +49,254 @@
 
         /* 板块 */
         .section-block { 
-            background: var(--card-bg); margin: 10px 12px; border-radius: 10px; 
-            padding: 0 10px 10px 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
+            background: var(--card-bg); margin: 12px; border-radius: 16px; 
+            padding: 0 0 12px 0; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            overflow: hidden; 
         }
         .section-header-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 5px; border-bottom: 1px solid var(--theme-light); cursor: pointer;
+            display: flex; justify-content: space-between; align-items: stretch;
+            border-bottom: 1px solid var(--theme-light);
+            min-height: 52px; background: #fff;
         }
-        .sec-title-group { display: flex; align-items: center; gap: 8px; flex: 1; }
-        .section-title { font-size: 15px; font-weight: bold; color: var(--theme-dark); padding: 2px 6px; border-radius: 4px;}
-        .section-count { font-size: 11px; color: #fff; background: var(--theme-dark); padding: 1px 6px; border-radius: 10px; opacity: 0.8;}
-        .section-arrow { font-size: 10px; color: var(--text-sub); transition: 0.2s; }
+        .sec-title-group { 
+            display: flex; align-items: center; gap: 10px; flex: 1; 
+            padding: 15px; cursor: pointer;
+        }
+        .sec-title-group:active { background: #fcfcfc; }
+
+        .section-title { font-size: 16px; font-weight: 700; color: var(--theme-dark); padding: 4px 8px; border-radius: 6px;}
+        .section-count { font-size: 11px; color: #fff; background: var(--theme-dark); padding: 2px 7px; border-radius: 10px; opacity: 0.8;}
+        
+        .section-arrow { 
+            font-size: 12px; color: var(--text-sub); transition: 0.2s; 
+            width: 20px; text-align: center; display: inline-block;
+        }
         .section-arrow.collapsed { transform: rotate(-90deg); }
-        .section-content { transition: all 0.3s; }
+        .section-content { transition: all 0.3s; padding: 0 10px; }
         .section-content.collapsed { display: none; }
-        .del-section-btn { font-size: 16px; color: #555; padding: 5px; font-weight: bold;}
+        
+        /* 极简删除图标 */
+        .del-section-btn { 
+            width: 52px; 
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0.3; transition: 0.2s; cursor: pointer;
+            border-left: 1px solid transparent;
+        }
+        .del-section-btn:hover { opacity: 1; }
+        .del-section-btn svg { width: 18px; height: 18px; fill: var(--text-main); }
 
         /* --- 任务列表项 --- */
         .task-list-area { min-height: 20px; }
         .task-item { 
-            border-bottom: 1px solid #f0f0f0; 
-            padding: 12px 0;
+            border-bottom: 1px solid #f5f5f5; 
+            padding: 14px 2px;
             background: white; 
             position: relative;
         }
 
-        /* 第一行容器：复选框 + (标题+日期) */
         .task-row-top { display: flex; align-items: flex-start; }
         
         .checkbox { 
-            width: 16px; height: 16px; 
+            width: 18px; height: 18px; 
             border: 2px solid var(--theme-dark); 
-            border-radius: 5px; 
-            margin-right: 10px; margin-top: 3px; /* 微调对齐 */
+            border-radius: 6px; 
+            margin-right: 12px; margin-top: 2px;
             flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; 
-            background: #fff;
+            background: #fff; transition: 0.2s;
         }
-        .checkbox.checked { background: var(--theme-dark); }
-        .checkbox.checked::after { content: '✓'; color: white; font-size: 10px; }
+        .checkbox.checked { background: var(--theme-dark); border-color: var(--theme-dark); }
+        .checkbox.checked::after { content: '✓'; color: white; font-size: 12px; font-weight: bold; }
 
         .task-main-content { flex: 1; min-width: 0; line-height: 1.5; }
-        
-        /* 标题与日期行内显示 */
         .title-date-inline-wrapper { display: inline; }
         
-        /* 标题字体缩小 */
         .task-name { 
-            font-size: 15px; /* 缩小字体 */
-            color: var(--text-main); font-weight: 500; 
+            font-size: 15px; color: var(--text-main); font-weight: 500; 
             margin-right: 8px; cursor: pointer; display: inline;
         }
         
-        /* --- 📅 日期样式 (行内) --- */
-        .date-inline-container {
-            display: inline; font-size: 12px; color: var(--text-sub);
-        }
-        
+        /* --- 📅 日期样式 --- */
+        .date-inline-container { display: inline; font-size: 12px; color: var(--text-sub); }
         .date-label { font-size: 11px; color: #aaa; margin-right: 2px; margin-left: 4px;}
         .date-val { font-family: -apple-system, monospace; font-weight: 500; }
         
-        /* 颜色状态类 */
-        .date-gray { color: #999; } /* 未开始 */
-        .date-green { color: var(--highlight); font-weight: bold; } /* 进行中 */
-        .date-red { color: var(--danger); font-weight: bold; } /* 过期 */
+        /* 颜色状态 */
+        .date-gray { color: var(--expired-text); } /* 过去的时间变灰 */
+        .date-green { color: var(--highlight); font-weight: bold; } /* 未来的时间变绿 */
+        .date-red { color: var(--danger); font-weight: bold; } /* 今天截止 */
 
-        /* 胶囊标签 (行内) */
         .date-badge { 
             display: inline-flex; align-items: center; justify-content: center;
             padding: 0 5px; border-radius: 4px; font-size: 10px; 
             height: 18px; margin: 0 4px; vertical-align: text-bottom;
         }
-        .badge-gray { background: #f5f5f5; color: #999; }     /* 灰色 (未开始/共X天) */
-        .badge-green { background: #e8f5e9; color: #2e7d32; } /* 绿色 (进行中) */
-        .badge-red { background: #ffebee; color: #c62828; }   /* 红色 (过期) */
+        .badge-gray { background: #f5f5f5; color: #ccc; }     
+        .badge-green { background: #e8f5e9; color: #2e7d32; } 
+        .badge-red { background: #ffebee; color: var(--danger); } 
 
-        /* --- 📝 备注样式 --- */
         .task-note-middle {
-            font-size: 12px; color: #888; 
-            margin-top: 2px; margin-bottom: 4px; 
+            font-size: 12px; color: #999; 
+            margin-top: 3px; margin-bottom: 5px; 
             display: block;
         }
 
-        /* --- 📊 进度条样式 --- */
-        .progress-area { margin-top: 6px; }
+        /* --- 📊 进度条样式 (操控优化版) --- */
+        .progress-area { 
+            margin-top: 10px; margin-bottom: 8px; 
+            padding-right: 5px; 
+        }
         .prog-bar-track {
-            position: relative; height: 8px; background: #eee; border-radius: 4px;
-            overflow: hidden; margin-bottom: 4px;
+            position: relative; 
+            height: 12px; 
+            background: #e0e0e0; 
+            border-radius: 6px;
+            overflow: visible; 
+            margin-bottom: 8px;
         }
         .prog-bar-fill {
-            height: 100%; background: var(--theme-dark);
-            width: 0%; transition: width 0.2s; border-radius: 4px;
+            height: 100%; 
+            background: var(--theme-dark);
+            width: 0%; 
+            transition: width 0.1s linear; 
+            border-radius: 6px;
         }
         .prog-slider {
-            position: absolute; top: -5px; left: 0; width: 100%; height: 20px;
-            opacity: 0; cursor: col-resize; z-index: 2;
+            position: absolute; 
+            top: -14px; left: 0; 
+            width: 100%; height: 40px; /* 大触控区 */
+            opacity: 0; cursor: pointer; z-index: 10;
+            -webkit-tap-highlight-color: transparent;
         }
+        
         .prog-controls-row {
-            display: flex; justify-content: flex-end; align-items: center; gap: 8px;
+            display: flex; justify-content: flex-end; align-items: center; gap: 12px;
         }
-        .prog-text-display { font-size: 11px; font-weight: bold; color: var(--theme-dark); }
+        .prog-text-display { 
+            font-size: 13px; font-weight: bold; color: var(--theme-dark); 
+            font-family: -apple-system, monospace; margin-right: auto;
+            padding-left: 2px;
+        }
         .prog-btn {
-            width: 20px; height: 20px; background: #f0f0f0; color: #333;
+            width: 32px; height: 32px; /* 大按钮 */
+            background: #fff; color: #333;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 12px; cursor: pointer; border: 1px solid #ddd;
+            font-size: 18px; cursor: pointer; 
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none;
+            transition: transform 0.1s;
         }
+        .prog-btn:active { transform: scale(0.9); background: #f0f0f0; }
 
-        /* 删除按钮 */
-        .del-task-btn { color: #ccc; font-size: 16px; margin-left: 8px; padding: 0 4px; cursor: pointer; margin-top: 2px;}
+        .del-task-btn { color: #ddd; font-size: 18px; margin-left: 8px; padding: 0 4px; cursor: pointer; line-height: 1;}
         .del-task-btn:active { color: var(--danger); }
 
-        .task-img { max-width: 80px; max-height: 80px; border-radius: 4px; margin-top: 4px; border: 1px solid #eee; display: block;}
+        .task-img-thumb { 
+            max-width: 60px; max-height: 60px; 
+            border-radius: 6px; margin-top: 6px; 
+            border: 1px solid #f0f0f0; display: block; 
+            cursor: zoom-in; object-fit: cover;
+        }
         
         .subtask-item { display: flex; align-items: center; margin: 4px 0; cursor: pointer; }
-        .subtask-check { width: 12px; height: 12px; border: 1px solid #888; border-radius: 3px; margin-right: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px;}
+        .subtask-check { width: 12px; height: 12px; border: 1px solid #ccc; border-radius: 3px; margin-right: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px;}
         .subtask-check.done { background: #ccc; border-color: #ccc; color: #fff;}
-        .subtask-text { font-size: 13px; color: #555; }
-        .subtask-text.done { text-decoration: line-through; color: #aaa; }
+        .subtask-text { font-size: 13px; color: #666; }
+        .subtask-text.done { text-decoration: line-through; color: #bbb; }
 
-        .completed-section { margin-top: 10px; padding-top: 8px; border-top: 2px dashed #eee; }
-        .completed-header { font-size: 13px; color: #888; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 500;}
-        .clear-btn { background: #fff; border: 1px solid var(--danger); color: var(--danger); font-size: 11px; padding: 2px 10px; border-radius: 12px; font-weight: bold;}
+        .completed-section { margin-top: 15px; padding-top: 0; border-top: none; }
+        .completed-header { font-size: 12px; color: #aaa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .clear-btn { background: #fff; border: 1px solid #eee; color: var(--danger); font-size: 10px; padding: 2px 8px; border-radius: 12px; }
 
         .add-btn-circle {
             width: 32px; height: 32px; border-radius: 50%;
             background: var(--theme-light); color: var(--theme-dark);
             display: flex; align-items: center; justify-content: center;
-            margin: 12px auto 0; cursor: pointer; font-size: 20px; font-weight: 300; border: 1px solid var(--border-color);
+            margin: 15px auto 0; cursor: pointer; font-size: 20px; font-weight: 300; 
         }
 
-        .global-actions { text-align: center; margin: 20px 0; }
-        .action-pill { background: white; border: 1px solid #aaa; color: #333; padding: 8px 16px; border-radius: 20px; font-size: 13px; margin: 0 5px; font-weight: 500;}
+        /* 底部全局布局 */
+        .footer-controls {
+            display: flex; flex-direction: row; align-items: center; justify-content: center;
+            gap: 40px; margin: 40px 0 30px 0;
+        }
+        .main-add-btn {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: var(--theme-dark); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; font-weight: 300; cursor: pointer;
+            box-shadow: 0 6px 16px rgba(85, 107, 47, 0.2);
+            transition: transform 0.2s;
+        }
+        .main-add-btn:active { transform: scale(0.92); }
 
-        /* 弹窗 */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; display: none; align-items: flex-end; }
-        .modal { background: white; width: 100%; border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 20px; max-height: 90vh; overflow-y: auto; }
+        .data-link { 
+            font-size: 13px; color: #aaa; cursor: pointer; 
+            text-decoration: none; padding: 8px; font-weight: 500;
+        }
+        .data-link:hover { color: var(--theme-dark); }
+
+        /* 灯箱 */
+        .lightbox-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+            cursor: zoom-out;
+        }
+        .lightbox-img { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 4px; }
+
+        /* 极简编辑面板 */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(2px);
+            z-index: 1000; display: none; align-items: center; justify-content: center; 
+        }
+        .modal { 
+            background: #fff; width: 90%; max-width: 400px;
+            border-radius: 24px; padding: 25px; 
+            max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal h3 { font-size: 18px; color: var(--text-main); margin: 0 0 20px 0; text-align: center; }
+
         .form-group { margin-bottom: 15px; }
-        .form-label { font-size: 14px; font-weight: bold; color: var(--theme-dark); margin-bottom: 6px; display: block;}
-        .form-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box;}
-        textarea.form-input { height: 70px; font-family: inherit; }
+        .form-label { font-size: 12px; color: #999; margin-bottom: 6px; display: block; font-weight: 500; }
+        .form-input { 
+            width: 100%; padding: 12px; 
+            background: var(--input-bg);
+            border: 1px solid transparent; 
+            border-radius: 12px; 
+            font-size: 15px; color: #333;
+            box-sizing: border-box; transition: 0.2s;
+        }
+        .form-input:focus { background: #fff; border-color: var(--theme-dark); outline: none; }
+        textarea.form-input { height: 80px; font-family: inherit; resize: none; }
+        
         .row-inputs { display: flex; gap: 10px; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; }
-        .btn-cancel { background: #f0f0f0; color: #555; }
-        .btn-save { background: var(--theme-dark); color: white; }
+        
+        .modal-buttons { display: flex; gap: 12px; margin-top: 25px; }
+        .btn { 
+            flex: 1; padding: 12px; border: none; border-radius: 12px; 
+            font-size: 15px; font-weight: 600; cursor: pointer; 
+        }
+        .btn-cancel { background: #f5f5f5; color: #888; }
+        .btn-save { background: var(--theme-dark); color: white; box-shadow: 0 4px 10px rgba(85, 107, 47, 0.2); }
+
+        .img-preview-box { position: relative; display: inline-block; margin-top: 10px; }
+        .preview-img { max-height: 80px; border-radius: 8px; border: 1px solid #eee; display: block; }
+        .del-img-badge {
+            position: absolute; top: -6px; right: -6px;
+            width: 20px; height: 20px;
+            background: var(--danger); color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); line-height: 1;
+        }
     </style>
 </head>
 <body>
@@ -201,77 +308,77 @@
 
     <div id="mainContainer" style="display:none;"></div>
 
-    <div class="global-actions" id="globalActions" style="display:none;">
-        <button class="action-pill" onclick="addNewSection()">+ 新增板块</button>
-        <button class="action-pill" onclick="exportData()">备份数据</button>
-        <button class="action-pill" onclick="document.getElementById('importFile').click()">恢复数据</button>
+    <div class="footer-controls" id="globalActions" style="display:none;">
+        <span class="data-link" onclick="exportData()">备份数据</span>
+        <div class="main-add-btn" onclick="addNewSection()">+</div>
+        <span class="data-link" onclick="document.getElementById('importFile').click()">恢复数据</span>
         <input type="file" id="importFile" style="display:none" onchange="importData(this)">
+    </div>
+
+    <div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()">
+        <img id="lightboxImg" class="lightbox-img" src="" alt="Full size">
     </div>
 
     <div class="modal-overlay" id="taskModal">
         <div class="modal">
-            <h3 id="modalTitle" style="color:var(--theme-dark); margin-top:0;">编辑待办</h3>
+            <h3>编辑待办</h3>
             <input type="hidden" id="editTaskIndex">
             <input type="hidden" id="editSectionIndex">
             
             <div class="form-group">
-                <label class="form-label">待办内容</label>
-                <input type="text" id="inputName" class="form-input">
+                <input type="text" id="inputName" class="form-input" placeholder="待办内容">
             </div>
             
             <div class="form-group">
-                <label class="form-label">备注</label>
-                <input type="text" id="inputNote" class="form-input" placeholder="简短备注">
+                <textarea id="inputNote" class="form-input" placeholder="添加备注..." style="height:50px"></textarea>
             </div>
 
             <div class="form-group">
-                <label class="form-label">日期设置</label>
+                <label class="form-label">时间安排</label>
                 <div class="row-inputs">
-                    <div style="flex:1">
-                        <span style="font-size:12px;color:#888">开始日期</span>
-                        <input type="date" id="inputStartDate" class="form-input">
-                    </div>
-                    <div style="flex:1">
-                        <span style="font-size:12px;color:#888">截止日期</span>
-                        <input type="date" id="inputDueDate" class="form-input">
-                    </div>
+                    <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" id="inputStartDate" class="form-input" placeholder="开始日期">
+                    <input type="text" onfocus="(this.type='date')" onblur="(this.type='text')" id="inputDueDate" class="form-input" placeholder="截止日期">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">进度条设置 (留空则为普通任务)</label>
-                <div class="row-inputs" style="margin-bottom:5px;">
-                    <input type="number" id="inputCurrent" class="form-input" placeholder="当前值(0)">
-                    <input type="number" id="inputTarget" class="form-input" placeholder="目标值(如100)">
+                <label class="form-label">进度目标</label>
+                <div class="row-inputs" style="margin-bottom:8px;">
+                    <input type="number" id="inputCurrent" class="form-input" placeholder="当前(0)">
+                    <input type="number" id="inputTarget" class="form-input" placeholder="目标">
                 </div>
                 <div class="row-inputs">
-                    <input type="text" id="inputUnit" class="form-input" placeholder="单位(如:页)">
-                    <input type="number" id="inputStep" class="form-input" placeholder="步长(如1)" value="1">
+                    <input type="text" id="inputUnit" class="form-input" placeholder="单位(页)">
+                    <input type="number" id="inputStep" class="form-input" placeholder="步长(1)" value="1">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">子任务 (每行一个)</label>
-                <textarea id="inputSubtasks" class="form-input" placeholder="步骤1&#10;步骤2"></textarea>
-            </div>
+                <label class="form-label">子任务 & 图片</label>
+                <textarea id="inputSubtasks" class="form-input" placeholder="子任务 (每行一个)"></textarea>
+                
+                <div style="margin-top:10px; display:flex; align-items:center; gap:10px;">
+                    <label for="inputImg" style="background:#F2F4F2; padding:8px 12px; border-radius:8px; font-size:12px; color:#666; cursor:pointer;">📷 上传图片</label>
+                    <input type="file" id="inputImg" accept="image/*" style="display:none" onchange="handleImageCompressed(this)">
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">图片</label>
-                <input type="file" id="inputImg" accept="image/*" onchange="handleImageCompressed(this)">
+                <div id="imgPreviewContainer" class="img-preview-box" style="display:none">
+                    <img id="imgPreview" class="preview-img" src="">
+                    <div class="del-img-badge" onclick="deleteTaskImg()">×</div>
+                </div>
                 <input type="hidden" id="imgBase64">
-                <div id="imgPreview" style="margin-top:5px;"></div>
             </div>
 
             <div class="modal-buttons">
                 <button class="btn btn-cancel" onclick="closeModal()">取消</button>
-                <button class="btn btn-save" onclick="saveTask()">保存</button>
+                <button class="btn btn-save" onclick="saveTask()">完成</button>
             </div>
         </div>
     </div>
 
     <script>
         // --- 1. 数据库 ---
-        const DB_NAME = "Dzz_V10_Inline"; const STORE_NAME = "store"; let db;
+        const DB_NAME = "Dzz_V20_GrayPast"; const STORE_NAME = "store"; let db;
         const dbEngine = {
             init: () => new Promise((res, rej) => {
                 const r = indexedDB.open(DB_NAME, 1);
@@ -305,7 +412,7 @@
                 const data = await dbEngine.load();
                 if(data) appData = data;
                 document.getElementById("mainContainer").style.display = "block";
-                document.getElementById("globalActions").style.display = "block";
+                document.getElementById("globalActions").style.display = "flex";
                 renderAll();
             } catch(e) { alert("Error: " + e); }
         };
@@ -316,6 +423,16 @@
             container.innerHTML = "";
 
             appData.sections.forEach((section, sIdx) => {
+                // 自动按日期排序
+                section.tasks.sort((a, b) => {
+                    const getSortTime = (t) => {
+                        if(t.startDate) return new Date(t.startDate).getTime();
+                        if(t.dueDate) return new Date(t.dueDate).getTime();
+                        return 8640000000000000; 
+                    };
+                    return getSortTime(a) - getSortTime(b);
+                });
+
                 const block = document.createElement("div");
                 block.className = "section-block";
                 block.dataset.idx = sIdx;
@@ -331,7 +448,9 @@
                         <div class="section-title" contenteditable="true" onclick="event.stopPropagation()">${section.title}</div>
                         <div class="section-count">${doneCount}/${total}</div>
                     </div>
-                    <div class="del-section-btn" onclick="deleteSection(${sIdx})">🗑</div>
+                    <div class="del-section-btn" onclick="deleteSection(${sIdx})">
+                        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    </div>
                 `;
                 header.querySelector('.section-title').onblur = function() {
                     appData.sections[sIdx].title = this.innerText; updateAndSave();
@@ -393,95 +512,76 @@
             const div = document.createElement("div");
             div.className = "task-item";
             
-            // 📅 时间轴逻辑 (行内版)
+            // 📅 时间轴逻辑
             let dateHTML = "";
             if(task.dueDate || task.startDate) {
                 const now = new Date(); now.setHours(0,0,0,0);
+                let preTag = ""; let startTag = ""; let midTag = ""; let dueTag = ""; let postTag = "";   
                 
-                // 1. 初始化变量
-                let preTag = "";    
-                let startTag = "";  
-                let midTag = "";    
-                let dueTag = "";    
-                let postTag = "";   
-
-                // 默认颜色：未开始=灰色
                 let startClass = "date-val date-gray"; 
                 let dueClass = "date-val date-gray";
-                let preBadgeClass = "badge-gray"; // 默认未开始胶囊灰色
+                let preBadgeClass = "badge-gray"; 
 
-                // 2. Start Date 处理
+                // Start Date Logic
                 if(task.startDate) {
                     const sd = new Date(task.startDate); sd.setHours(0,0,0,0);
                     const formattedStart = `${sd.getFullYear()}.${(sd.getMonth()+1).toString().padStart(2,'0')}.${sd.getDate().toString().padStart(2,'0')}`;
                     
-                    // 状态判断
                     if(now < sd) {
-                        // 未开始：全灰
                         const diff = Math.ceil((sd - now)/86400000);
-                        preTag = `<span class="date-badge ${preBadgeClass}">还有 ${diff} 天开始</span>`;
+                        // 未来：绿
+                        preTag = `<span class="date-badge badge-green">还有 ${diff} 天</span>`;
+                        startClass = "date-val date-green"; 
                     } else {
-                        // 当日或已开始：变绿
-                        startClass = "date-val date-green";
-                        if(now.getTime() === sd.getTime()) startClass += " hl-green"; // 额外加粗
+                        // 过去或今天：检查逻辑
+                        if(now.getTime() === sd.getTime()) {
+                            startClass = "date-val date-green"; // 今天绿
+                        } else {
+                            // 过去：🔥 灰
+                            startClass = "date-val date-gray";
+                        }
                     }
 
-                    // 如果处于区间内
                     if(task.dueDate) {
                         const dd = new Date(task.dueDate); dd.setHours(0,0,0,0);
                         if(now >= sd && now <= dd) {
-                            // 进行中：全绿
-                            startClass = "date-val date-green"; 
-                            dueClass = "date-val date-green"; // 截止日期也变绿提醒
-                            
                             const diff = Math.ceil((dd - now)/86400000);
                             let txt = diff===0 ? "今天截止" : `剩 ${diff} 天`;
-                            // 剩余天数用绿色胶囊
                             preTag = `<span class="date-badge badge-green">${txt}</span>`;
                         }
-                        // 间隔 (灰)
                         const dur = Math.ceil((dd - sd)/86400000);
                         midTag = `<span class="date-badge badge-gray">共 ${dur} 天</span>`;
                     }
-
                     startTag = `<span class="date-label">Start</span><span class="${startClass}">${formattedStart}</span>`;
                 }
 
-                // 3. Deadline 处理
+                // Deadline Logic
                 if(task.dueDate) {
                     const dd = new Date(task.dueDate); dd.setHours(0,0,0,0);
                     const formattedDue = `${dd.getFullYear()}.${(dd.getMonth()+1).toString().padStart(2,'0')}.${dd.getDate().toString().padStart(2,'0')}`;
-                    
                     const diff = Math.ceil((dd - now)/86400000);
 
                     if(now > dd && !task.done) {
-                        // 过期：红
+                        // 🔥 过期：红标签 + 灰文字
                         postTag = `<span class="date-badge badge-red">过期 ${Math.abs(diff)} 天</span>`;
+                        dueClass = "date-val date-gray"; 
                     } else if (now.getTime() === dd.getTime()) {
-                        // 截止当日：红
+                        // 今天截止：红文字
                         dueClass = "date-val date-red"; 
                         if(!preTag) preTag = `<span class="date-badge badge-red">今天截止</span>`;
                     } else if (!task.startDate && !preTag && diff >= 0) {
-                        // 只有截止日期，没开始日期，没过期 -> 绿色剩X天
                         preTag = `<span class="date-badge badge-green">剩 ${diff} 天</span>`;
-                        dueClass = "date-val date-green"; // 既然在倒计时，日期也亮起来
+                        dueClass = "date-val date-green";
+                    } else {
+                        // 未来截止：绿
+                        if(now < dd) dueClass = "date-val date-green";
                     }
-
-                    // 如果处于区间 (在Start里已变绿，这里如果Start不存在，保持上面逻辑)
-                    
                     dueTag = `<span class="date-label">Deadline</span><span class="${dueClass}">${formattedDue}</span>`;
                 }
-
-                dateHTML = `
-                    <span class="date-inline-container">
-                        ${preTag} ${startTag} ${midTag} ${dueTag} ${postTag}
-                    </span>
-                `;
+                dateHTML = `<span class="date-inline-container">${preTag} ${startTag} ${midTag} ${dueTag} ${postTag}</span>`;
             }
 
             const hasProgress = (task.targetVal && task.targetVal > 0);
-            
-            // --- 内容拼接 ---
             let noteHTML = task.note ? `<span class="task-note-middle">${task.note}</span>` : '';
             
             let bottomContent = '';
@@ -504,7 +604,7 @@
 
             let extraHTML = `
                 ${renderSubtasks(task.subtasks, sIdx, tIdx)}
-                ${task.img ? `<img src="${task.img}" class="task-img">` : ''}
+                ${task.img ? `<img src="${task.img}" class="task-img-thumb" onclick="showLightbox('${task.img}')">` : ''}
             `;
 
             div.innerHTML = `
@@ -515,7 +615,6 @@
                             <div class="task-name" onclick="openModal(${sIdx}, ${tIdx})">${task.name}</div>
                             ${dateHTML}
                         </div>
-                        
                         ${noteHTML}
                         ${bottomContent}
                         ${extraHTML}
@@ -549,90 +648,40 @@
         // --- 逻辑操作 ---
         function updateAndSave() { renderAll(); dbEngine.save(appData); }
         function toggleSection(idx) { appData.sections[idx].collapsed = !appData.sections[idx].collapsed; updateAndSave(); }
-        
-        function toggleTask(s, t) { 
-            if (!appData.sections[s] || !appData.sections[s].tasks[t]) return;
-            appData.sections[s].tasks[t].done = !appData.sections[s].tasks[t].done; 
-            updateAndSave(); 
+        function toggleTask(s, t) { if(!appData.sections[s]||!appData.sections[s].tasks[t])return; appData.sections[s].tasks[t].done = !appData.sections[s].tasks[t].done; updateAndSave(); }
+        function delTask(s, t) { if(!appData.sections[s]||!appData.sections[s].tasks[t])return; appData.sections[s].tasks.splice(t, 1); updateAndSave(); }
+        function clearDone(s) { appData.sections[s].tasks = appData.sections[s].tasks.filter(t => !t.done); updateAndSave(); }
+        function updateProgVal(s, t, val) { if(!appData.sections[s].tasks[t])return; appData.sections[s].tasks[t].currentVal = parseFloat(val); updateAndSave(); }
+        function adjustProg(s, t, dir) { 
+            if(!appData.sections[s].tasks[t])return; const task=appData.sections[s].tasks[t]; const step=parseFloat(task.stepVal)||1; 
+            let val=parseFloat(task.currentVal)||0; val+=(dir*step); if(val<0)val=0; if(val>task.targetVal)val=task.targetVal; task.currentVal=val; updateAndSave(); 
         }
-
-        function delTask(s, t) { 
-            if (!appData.sections[s] || !appData.sections[s].tasks[t]) return;
-            appData.sections[s].tasks.splice(t, 1); 
-            updateAndSave(); 
+        function toggleSubtask(s, t, l) {
+            if(!appData.sections[s].tasks[t])return; let lines=appData.sections[s].tasks[t].subtasks.split('\n'); let line=lines[l];
+            if(line.trim().startsWith('[x]')) lines[l]=line.replace('[x]','').trim(); else lines[l]='[x] '+line.trim();
+            appData.sections[s].tasks[t].subtasks=lines.join('\n'); updateAndSave();
         }
-
-        function clearDone(s) { 
-            appData.sections[s].tasks = appData.sections[s].tasks.filter(t => !t.done); 
-            updateAndSave(); 
-        }
-        
-        function updateProgVal(s, t, val) {
-            if (!appData.sections[s].tasks[t]) return;
-            appData.sections[s].tasks[t].currentVal = parseFloat(val);
-            updateAndSave();
-        }
-        
-        function adjustProg(s, t, dir) {
-            if (!appData.sections[s].tasks[t]) return;
-            const task = appData.sections[s].tasks[t];
-            const step = parseFloat(task.stepVal) || 1;
-            let val = parseFloat(task.currentVal) || 0;
-            val += (dir * step);
-            if(val < 0) val = 0;
-            if(val > task.targetVal) val = task.targetVal;
-            task.currentVal = val;
-            updateAndSave();
-        }
-
-        function toggleSubtask(s, t, lineIdx) {
-            if (!appData.sections[s].tasks[t]) return;
-            let text = appData.sections[s].tasks[t].subtasks;
-            let lines = text.split('\n');
-            let line = lines[lineIdx];
-            if(line.trim().startsWith('[x]')) lines[lineIdx] = line.replace('[x]', '').trim();
-            else lines[lineIdx] = '[x] ' + line.trim();
-            appData.sections[s].tasks[t].subtasks = lines.join('\n');
-            updateAndSave();
-        }
-
         function handleSort(evt) {
-            const oldS = parseInt(evt.from.dataset.sIdx);
-            const newS = parseInt(evt.to.dataset.sIdx);
-            const oldIdx = evt.oldIndex;
-            const newIdx = evt.newIndex;
-            
-            const sourceUndone = appData.sections[oldS].tasks.filter(t => !t.done);
-            const item = sourceUndone[oldIdx];
-            if (!item) return updateAndSave();
-
-            const trueIdx = appData.sections[oldS].tasks.indexOf(item);
-            appData.sections[oldS].tasks.splice(trueIdx, 1);
-
-            if(oldS === newS) {
-                const currUndone = appData.sections[oldS].tasks.filter(t => !t.done);
-                if(newIdx >= currUndone.length) appData.sections[oldS].tasks.push(item);
-                else {
-                    const ref = currUndone[newIdx];
-                    appData.sections[oldS].tasks.splice(appData.sections[oldS].tasks.indexOf(ref), 0, item);
-                }
-            } else {
-                const targetUndone = appData.sections[newS].tasks.filter(t => !t.done);
-                if(newIdx >= targetUndone.length) appData.sections[newS].tasks.push(item);
-                else {
-                    const ref = targetUndone[newIdx];
-                    appData.sections[newS].tasks.splice(appData.sections[newS].tasks.indexOf(ref), 0, item);
-                }
-            }
+            const oldS=parseInt(evt.from.dataset.sIdx), newS=parseInt(evt.to.dataset.sIdx), oldI=evt.oldIndex, newI=evt.newIndex;
+            const item = appData.sections[oldS].tasks.filter(t=>!t.done)[oldI]; if(!item)return updateAndSave();
+            appData.sections[oldS].tasks.splice(appData.sections[oldS].tasks.indexOf(item),1);
+            const targetList = appData.sections[newS].tasks.filter(t=>!t.done);
+            if(newI>=targetList.length) appData.sections[newS].tasks.push(item);
+            else appData.sections[newS].tasks.splice(appData.sections[newS].tasks.indexOf(targetList[newI]),0,item);
             updateAndSave();
         }
 
-        // --- 弹窗与图片 ---
+        function showLightbox(src) { document.getElementById('lightboxImg').src=src; document.getElementById('lightbox').style.display='flex'; }
+        function closeLightbox() { document.getElementById('lightbox').style.display='none'; }
+
+        // --- 弹窗逻辑 ---
         function openModal(sIdx, tIdx = null) {
             document.getElementById("editSectionIndex").value = sIdx;
             document.getElementById("editTaskIndex").value = tIdx !== null ? tIdx : -1;
             document.getElementById("taskModal").style.display = "flex";
-            
+            const box = document.getElementById("imgPreviewContainer");
+            const img = document.getElementById("imgPreview");
+
             if(tIdx !== null) {
                 const task = appData.sections[sIdx].tasks[tIdx];
                 document.getElementById("inputName").value = task.name;
@@ -644,12 +693,14 @@
                 document.getElementById("inputUnit").value = task.unit || "";
                 document.getElementById("inputStep").value = task.stepVal || "";
                 document.getElementById("inputSubtasks").value = task.subtasks || "";
+                
                 document.getElementById("imgBase64").value = task.img || "";
-                document.getElementById("imgPreview").innerHTML = task.img ? `<img src="${task.img}" style="height:50px">` : "";
+                if(task.img) { img.src = task.img; box.style.display = 'inline-block'; }
+                else { box.style.display = 'none'; }
             } else {
                 document.querySelectorAll('.form-input').forEach(i => i.value = "");
                 document.getElementById("imgBase64").value = "";
-                document.getElementById("imgPreview").innerHTML = "";
+                box.style.display = 'none';
             }
         }
         function closeModal() { document.getElementById("taskModal").style.display = "none"; }
@@ -659,29 +710,32 @@
                 const file = input.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
+                    const img = new Image(); img.src = e.target.result;
                     img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const maxWidth = 800;
-                        let w = img.width; let h = img.height;
-                        if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
-                        canvas.width = w; canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        const base64 = canvas.toDataURL('image/jpeg', 0.7);
+                        const c = document.createElement('canvas'), ctx = c.getContext('2d');
+                        let w=img.width, h=img.height; const max=800;
+                        if(w>max){ h=Math.round(h*max/w); w=max; } c.width=w; c.height=h;
+                        ctx.drawImage(img,0,0,w,h);
+                        const base64 = c.toDataURL('image/jpeg', 0.7);
                         document.getElementById("imgBase64").value = base64;
-                        document.getElementById("imgPreview").innerHTML = `<img src="${base64}" style="height:50px">`;
+                        document.getElementById("imgPreview").src = base64;
+                        document.getElementById("imgPreviewContainer").style.display = "inline-block";
                     }
                 }
                 reader.readAsDataURL(file);
             }
         }
 
+        // 删除图片
+        function deleteTaskImg() {
+            document.getElementById("imgBase64").value = "";
+            document.getElementById("imgPreviewContainer").style.display = "none";
+            document.getElementById("inputImg").value = "";
+        }
+
         async function saveTask() {
             const sIdx = parseInt(document.getElementById("editSectionIndex").value);
             const tIdx = parseInt(document.getElementById("editTaskIndex").value);
-            
             const task = {
                 name: document.getElementById("inputName").value.trim(),
                 note: document.getElementById("inputNote").value,
@@ -696,25 +750,19 @@
                 done: false,
                 id: tIdx !== -1 ? appData.sections[sIdx].tasks[tIdx].id : Date.now()
             };
-
             if(!task.name) return alert("写个名字吧");
-
             if(tIdx !== -1) {
                 task.done = appData.sections[sIdx].tasks[tIdx].done;
                 appData.sections[sIdx].tasks[tIdx] = task;
-            } else {
-                appData.sections[sIdx].tasks.push(task);
-            }
-            updateAndSave();
-            closeModal();
+            } else { appData.sections[sIdx].tasks.push(task); }
+            updateAndSave(); closeModal();
         }
 
         function addNewSection() { appData.sections.push({title:"新板块", collapsed:false, tasks:[]}); updateAndSave(); }
         function deleteSection(idx) { if(confirm("删除板块?")) { appData.sections.splice(idx,1); updateAndSave(); } }
         async function exportData() {
             const b = new Blob([JSON.stringify(appData)], {type:"application/json"});
-            const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `Dzz备份.json`;
-            a.click();
+            const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `Dzz备份.json`; a.click();
         }
         function importData(inp) {
             const f = inp.files[0]; if(!f) return;
