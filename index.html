@@ -21,7 +21,7 @@
             --text-sub: #999999;
             --danger: #d32f2f;         
             --highlight: #2e7d32; 
-            --expired-text: #b0b0b0;   /* 过期日期文字颜色(灰) */
+            --expired-text: #b0b0b0;
             --border-color: #e0e0e0;
             --badge-bg: #f0f2f0;
         }
@@ -34,22 +34,25 @@
             padding-bottom: 120px; 
             color: var(--text-main);
             user-select: none; -webkit-user-select: none;
+            /* 🔥 全局字号基准微调 */
+            font-size: 15px; 
         }
 
         /* 顶部 */
         .header { 
-            padding: 12px 15px; 
+            padding: 14px 18px; /* 增加一点内边距 */
             background: rgba(255,255,255,0.98);
             border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
         }
-        h1 { margin: 0; font-size: 20px; font-weight: 700; color: var(--theme-dark); letter-spacing: 1px;}
-        .date-str { font-size: 11px; color: var(--text-sub); }
+        /* 🔥 标题放大 */
+        h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--theme-dark); letter-spacing: 1px;}
+        .date-str { font-size: 12px; color: var(--text-sub); }
 
         /* 板块 */
         .section-block { 
-            background: var(--card-bg); margin: 12px; border-radius: 16px; 
+            background: var(--card-bg); margin: 14px 12px; border-radius: 16px; 
             padding: 0 0 12px 0; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
             overflow: hidden; 
@@ -57,93 +60,98 @@
         .section-header-row {
             display: flex; justify-content: space-between; align-items: stretch;
             border-bottom: 1px solid var(--theme-light);
-            min-height: 52px; background: #fff;
+            min-height: 56px; background: #fff;
         }
         .sec-title-group { 
             display: flex; align-items: center; gap: 10px; flex: 1; 
-            padding: 15px; cursor: pointer;
+            padding: 16px; cursor: pointer;
         }
         .sec-title-group:active { background: #fcfcfc; }
 
-        .section-title { font-size: 16px; font-weight: 700; color: var(--theme-dark); padding: 4px 8px; border-radius: 6px;}
-        .section-count { font-size: 11px; color: #fff; background: var(--theme-dark); padding: 2px 7px; border-radius: 10px; opacity: 0.8;}
+        /* 🔥 板块标题放大 */
+        .section-title { font-size: 18px; font-weight: 700; color: var(--theme-dark); padding: 4px 8px; border-radius: 6px;}
+        .section-count { font-size: 12px; color: #fff; background: var(--theme-dark); padding: 2px 8px; border-radius: 10px; opacity: 0.8;}
         
         .section-arrow { 
-            font-size: 12px; color: var(--text-sub); transition: 0.2s; 
+            font-size: 14px; color: var(--text-sub); transition: 0.2s; 
             width: 20px; text-align: center; display: inline-block;
         }
         .section-arrow.collapsed { transform: rotate(-90deg); }
         .section-content { transition: all 0.3s; padding: 0 10px; }
         .section-content.collapsed { display: none; }
         
-        /* 极简删除图标 */
         .del-section-btn { 
-            width: 52px; 
+            width: 56px; 
             display: flex; align-items: center; justify-content: center;
             opacity: 0.3; transition: 0.2s; cursor: pointer;
             border-left: 1px solid transparent;
         }
         .del-section-btn:hover { opacity: 1; }
-        .del-section-btn svg { width: 18px; height: 18px; fill: var(--text-main); }
+        .del-section-btn svg { width: 20px; height: 20px; fill: var(--text-main); }
 
         /* --- 任务列表项 --- */
         .task-list-area { min-height: 20px; }
         .task-item { 
             border-bottom: 1px solid #f5f5f5; 
-            padding: 14px 2px;
+            padding: 15px 4px; /* 增加舒适度 */
             background: white; 
             position: relative;
         }
 
         .task-row-top { display: flex; align-items: flex-start; }
         
+        /* 复选框微调 */
         .checkbox { 
-            width: 18px; height: 18px; 
+            width: 20px; height: 20px; /* 稍微大一点点 */
             border: 2px solid var(--theme-dark); 
             border-radius: 6px; 
-            margin-right: 12px; margin-top: 2px;
+            margin-right: 12px; margin-top: 3px;
             flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; 
             background: #fff; transition: 0.2s;
         }
         .checkbox.checked { background: var(--theme-dark); border-color: var(--theme-dark); }
-        .checkbox.checked::after { content: '✓'; color: white; font-size: 12px; font-weight: bold; }
+        .checkbox.checked::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
         .task-main-content { flex: 1; min-width: 0; line-height: 1.5; }
         .title-date-inline-wrapper { display: inline; }
         
+        /* 🔥 待办名称放大 */
         .task-name { 
-            font-size: 15px; color: var(--text-main); font-weight: 500; 
+            font-size: 17px; color: var(--text-main); font-weight: 600; 
             margin-right: 8px; cursor: pointer; display: inline;
+            letter-spacing: 0.3px;
         }
         
         /* --- 📅 日期样式 --- */
-        .date-inline-container { display: inline; font-size: 12px; color: var(--text-sub); }
-        .date-label { font-size: 11px; color: #aaa; margin-right: 2px; margin-left: 4px;}
-        .date-val { font-family: -apple-system, monospace; font-weight: 500; }
+        .date-inline-container { display: inline; font-size: 13px; color: var(--text-sub); } /* 字号 12->13 */
+        .date-label { font-size: 12px; color: #aaa; margin-right: 3px; margin-left: 5px;}
         
-        /* 颜色状态 */
-        .date-gray { color: var(--expired-text); } /* 过去的时间变灰 */
-        .date-green { color: var(--highlight); font-weight: bold; } /* 未来的时间变绿 */
-        .date-red { color: var(--danger); font-weight: bold; } /* 今天截止 */
+        /* 🔥 日期数值放大 */
+        .date-val { font-family: -apple-system, monospace; font-weight: 600; font-size: 14px; }
+        
+        .date-gray { color: var(--expired-text); }
+        .date-green { color: var(--highlight); font-weight: bold; }
+        .date-red { color: var(--danger); font-weight: bold; }
 
         .date-badge { 
             display: inline-flex; align-items: center; justify-content: center;
-            padding: 0 5px; border-radius: 4px; font-size: 10px; 
-            height: 18px; margin: 0 4px; vertical-align: text-bottom;
+            padding: 0 6px; border-radius: 4px; font-size: 11px; /* 字号 10->11 */
+            height: 20px; margin: 0 4px; vertical-align: text-bottom;
         }
         .badge-gray { background: #f5f5f5; color: #ccc; }     
         .badge-green { background: #e8f5e9; color: #2e7d32; } 
         .badge-red { background: #ffebee; color: var(--danger); } 
 
+        /* 🔥 备注放大 */
         .task-note-middle {
-            font-size: 12px; color: #999; 
-            margin-top: 3px; margin-bottom: 5px; 
+            font-size: 13px; color: #888; 
+            margin-top: 4px; margin-bottom: 6px; 
             display: block;
         }
 
-        /* --- 📊 进度条样式 (操控优化版) --- */
+        /* --- 📊 进度条样式 --- */
         .progress-area { 
-            margin-top: 10px; margin-bottom: 8px; 
+            margin-top: 12px; margin-bottom: 10px; 
             padding-right: 5px; 
         }
         .prog-bar-track {
@@ -164,7 +172,7 @@
         .prog-slider {
             position: absolute; 
             top: -14px; left: 0; 
-            width: 100%; height: 40px; /* 大触控区 */
+            width: 100%; height: 40px;
             opacity: 0; cursor: pointer; z-index: 10;
             -webkit-tap-highlight-color: transparent;
         }
@@ -172,13 +180,14 @@
         .prog-controls-row {
             display: flex; justify-content: flex-end; align-items: center; gap: 12px;
         }
+        /* 🔥 进度文字放大 */
         .prog-text-display { 
-            font-size: 13px; font-weight: bold; color: var(--theme-dark); 
+            font-size: 14px; font-weight: bold; color: var(--theme-dark); 
             font-family: -apple-system, monospace; margin-right: auto;
             padding-left: 2px;
         }
         .prog-btn {
-            width: 32px; height: 32px; /* 大按钮 */
+            width: 32px; height: 32px; 
             background: #fff; color: #333;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 18px; cursor: pointer; 
@@ -189,31 +198,32 @@
         }
         .prog-btn:active { transform: scale(0.9); background: #f0f0f0; }
 
-        .del-task-btn { color: #ddd; font-size: 18px; margin-left: 8px; padding: 0 4px; cursor: pointer; line-height: 1;}
+        .del-task-btn { color: #ddd; font-size: 20px; margin-left: 10px; padding: 0 6px; cursor: pointer; line-height: 1;}
         .del-task-btn:active { color: var(--danger); }
 
         .task-img-thumb { 
-            max-width: 60px; max-height: 60px; 
-            border-radius: 6px; margin-top: 6px; 
+            max-width: 70px; max-height: 70px; /* 预览图稍微大一点 */
+            border-radius: 6px; margin-top: 8px; 
             border: 1px solid #f0f0f0; display: block; 
             cursor: zoom-in; object-fit: cover;
         }
         
-        .subtask-item { display: flex; align-items: center; margin: 4px 0; cursor: pointer; }
-        .subtask-check { width: 12px; height: 12px; border: 1px solid #ccc; border-radius: 3px; margin-right: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px;}
+        .subtask-item { display: flex; align-items: center; margin: 6px 0; cursor: pointer; }
+        .subtask-check { width: 14px; height: 14px; border: 1px solid #ccc; border-radius: 3px; margin-right: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px;}
         .subtask-check.done { background: #ccc; border-color: #ccc; color: #fff;}
-        .subtask-text { font-size: 13px; color: #666; }
+        /* 🔥 子任务文字放大 */
+        .subtask-text { font-size: 14px; color: #666; }
         .subtask-text.done { text-decoration: line-through; color: #bbb; }
 
-        .completed-section { margin-top: 15px; padding-top: 0; border-top: none; }
-        .completed-header { font-size: 12px; color: #aaa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .clear-btn { background: #fff; border: 1px solid #eee; color: var(--danger); font-size: 10px; padding: 2px 8px; border-radius: 12px; }
+        .completed-section { margin-top: 20px; padding-top: 0; border-top: none; }
+        .completed-header { font-size: 13px; color: #aaa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .clear-btn { background: #fff; border: 1px solid #eee; color: var(--danger); font-size: 11px; padding: 3px 10px; border-radius: 12px; }
 
         .add-btn-circle {
-            width: 32px; height: 32px; border-radius: 50%;
+            width: 34px; height: 34px; border-radius: 50%;
             background: var(--theme-light); color: var(--theme-dark);
             display: flex; align-items: center; justify-content: center;
-            margin: 15px auto 0; cursor: pointer; font-size: 20px; font-weight: 300; 
+            margin: 18px auto 0; cursor: pointer; font-size: 22px; font-weight: 300; 
         }
 
         /* 底部全局布局 */
@@ -246,7 +256,7 @@
         }
         .lightbox-img { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 4px; }
 
-        /* 极简编辑面板 */
+        /* 极简编辑面板 - 字体同步放大 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.3); backdrop-filter: blur(2px);
@@ -261,27 +271,27 @@
         }
         @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        .modal h3 { font-size: 18px; color: var(--text-main); margin: 0 0 20px 0; text-align: center; }
+        .modal h3 { font-size: 19px; color: var(--text-main); margin: 0 0 20px 0; text-align: center; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-label { font-size: 12px; color: #999; margin-bottom: 6px; display: block; font-weight: 500; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { font-size: 14px; color: #999; margin-bottom: 6px; display: block; font-weight: 500; }
         .form-input { 
-            width: 100%; padding: 12px; 
+            width: 100%; padding: 14px; 
             background: var(--input-bg);
             border: 1px solid transparent; 
             border-radius: 12px; 
-            font-size: 15px; color: #333;
+            font-size: 16px; color: #333;
             box-sizing: border-box; transition: 0.2s;
         }
         .form-input:focus { background: #fff; border-color: var(--theme-dark); outline: none; }
-        textarea.form-input { height: 80px; font-family: inherit; resize: none; }
+        textarea.form-input { height: 90px; font-family: inherit; resize: none; }
         
         .row-inputs { display: flex; gap: 10px; }
         
         .modal-buttons { display: flex; gap: 12px; margin-top: 25px; }
         .btn { 
-            flex: 1; padding: 12px; border: none; border-radius: 12px; 
-            font-size: 15px; font-weight: 600; cursor: pointer; 
+            flex: 1; padding: 14px; border: none; border-radius: 12px; 
+            font-size: 16px; font-weight: 600; cursor: pointer; 
         }
         .btn-cancel { background: #f5f5f5; color: #888; }
         .btn-save { background: var(--theme-dark); color: white; box-shadow: 0 4px 10px rgba(85, 107, 47, 0.2); }
@@ -378,7 +388,7 @@
 
     <script>
         // --- 1. 数据库 ---
-        const DB_NAME = "Dzz_V20_GrayPast"; const STORE_NAME = "store"; let db;
+        const DB_NAME = "Dzz_V21_LargerFont"; const STORE_NAME = "store"; let db;
         const dbEngine = {
             init: () => new Promise((res, rej) => {
                 const r = indexedDB.open(DB_NAME, 1);
@@ -529,15 +539,12 @@
                     
                     if(now < sd) {
                         const diff = Math.ceil((sd - now)/86400000);
-                        // 未来：绿
                         preTag = `<span class="date-badge badge-green">还有 ${diff} 天</span>`;
-                        startClass = "date-val date-green"; 
                     } else {
                         // 过去或今天：检查逻辑
                         if(now.getTime() === sd.getTime()) {
                             startClass = "date-val date-green"; // 今天绿
                         } else {
-                            // 过去：🔥 灰
                             startClass = "date-val date-gray";
                         }
                     }
@@ -562,18 +569,15 @@
                     const diff = Math.ceil((dd - now)/86400000);
 
                     if(now > dd && !task.done) {
-                        // 🔥 过期：红标签 + 灰文字
                         postTag = `<span class="date-badge badge-red">过期 ${Math.abs(diff)} 天</span>`;
                         dueClass = "date-val date-gray"; 
                     } else if (now.getTime() === dd.getTime()) {
-                        // 今天截止：红文字
                         dueClass = "date-val date-red"; 
                         if(!preTag) preTag = `<span class="date-badge badge-red">今天截止</span>`;
                     } else if (!task.startDate && !preTag && diff >= 0) {
                         preTag = `<span class="date-badge badge-green">剩 ${diff} 天</span>`;
                         dueClass = "date-val date-green";
                     } else {
-                        // 未来截止：绿
                         if(now < dd) dueClass = "date-val date-green";
                     }
                     dueTag = `<span class="date-label">Deadline</span><span class="${dueClass}">${formattedDue}</span>`;
